@@ -97,17 +97,6 @@ while True:
 # Exit program
 pg.quit()
 
-#lock piece
-def lock_piece(self, piece):
-        for i, row in enumerate(piece.shape[piece.rotation % len(piece.shape)]):
-            for j, cell in enumerate(row):
-                if cell == 'O':
-                    self.grid[piece.y + i][piece.x + j] = piece.color
-        lines_cleared = self.clear_lines()
-        self.score += lines_cleared * 100 
-        self.current_piece = self.new_piece()
-        if not self.valid_move(self.current_piece, 0, 0, 0):
-            self.game_over = True
 
 #line clear
 
@@ -122,7 +111,6 @@ def clear_lines(self):
 #valid moves
 
 def valid_move(self, piece, x, y, rotation):
-        """Check if the piece can move to the given position"""
         for i, row in enumerate(piece.shape[(piece.rotation + rotation) % len(piece.shape)]):
             for j, cell in enumerate(row):
                 try:
