@@ -1,19 +1,33 @@
-print("Tetris")
 import time
 import pygame as pg
 import random
+
+def convert(relative):
+    r=[]
+    for i in relative:
+        r.append((i[0]+x, i[1]+y))
+    return r
 
 class Block:
     def __init__(self,blocktype):
         self.x = 5
         self.y = 4
-        self.tiles = Blocks[blocktype]
+        self.tiles = Blocks[blocktype][0]
     def rotate(self,rotation=None):
-        if type(rotation) == "integer"  
+        self.oldrotation
+        if type(rotation) != int:
+            rotation = None
+        if rotation == None:
+            rotation = self.rotation + 1
+        self.tiles = Blocks[self.blocktype][rotation]
+        
 
+     
     def draw(self):
+        for i in Blocks[self.blocktype][self.oldrotation]:
+            draw(*convert(i), "black")
         for i in self.tiles:
-            draw(*i)
+            draw(*convert(i))
 
 #colour data bank
 colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "yellow": [0, 255, 0], "green": [255, 0, 255],
@@ -42,7 +56,7 @@ s=Blocks[temp[random.randint(0,8)]]
 
 
 def draw(x, y, color="blue"):
-    pg.draw.rect(surface, colors[color], pg.Rect(x * 50 + 2, y * 50 + 2, 50 - 2, 50 - 2))
+    pg.draw.rect(surface, colours[color], pg.Rect(x * 50 + 2, y * 50 + 2, 50 - 2, 50 - 2))
 
 changed = True
 def update():
@@ -63,15 +77,19 @@ lastgravity = 0
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
+        lastgravity = time.time()
     event = pg.event.get(pg.KEYDOWN)
     if event:
         if event[0].key == pg.K_RIGHT:
             x += 1
+        if event[0].key == pg.K_LEFT:
+            x -= 1
         elif event[0].key == pg.K_DOWN:
             lastgravity = 0
     update()
     lx = x
     ly = y
+    time.sleep(0.05)
     event = pg.event.get(pg.WINDOWCLOSE)
     if event:
         break
