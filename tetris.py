@@ -48,7 +48,7 @@ Blocks = {
     'S': [(0, 0), (-1, 0), (-1, 1), (0, -1)]
 
 }
-#random block
+#randomizer
 temp = ["T","cube","J","L","I","downT","_","reverseS","S"]
 s=Blocks[temp[random.randint(0,8)]]
 
@@ -97,6 +97,37 @@ while True:
 # Exit program
 pg.quit()
 
+#lock piece
+def lock_piece(self, piece):
+        for i, row in enumerate(piece.shape[piece.rotation % len(piece.shape)]):
+            for j, cell in enumerate(row):
+                if cell == 'O':
+                    self.grid[piece.y + i][piece.x + j] = piece.color
+        lines_cleared = self.clear_lines()
+        self.score += lines_cleared * 100 
+        self.current_piece = self.new_piece()
+        if not self.valid_move(self.current_piece, 0, 0, 0):
+            self.game_over = True
 
+#line clear
 
+def clear_lines(self):
+        for i, row in enumerate(self.grid[:-1]):
+            if all(cell != 0 for cell in row):
+                lines_cleared += 1
+                del self.grid[i]
+                self.grid.insert(0, [0 for _ in range(self.width)])
+        return lines_cleared
 
+#valid moves
+
+def valid_move(self, piece, x, y, rotation):
+        """Check if the piece can move to the given position"""
+        for i, row in enumerate(piece.shape[(piece.rotation + rotation) % len(piece.shape)]):
+            for j, cell in enumerate(row):
+                try:
+                    if cell == 'O' and (self.grid[piece.y + i + y][piece.x + j + x] != 0):
+                        return False
+                except IndexError:
+                    return False
+        return True
