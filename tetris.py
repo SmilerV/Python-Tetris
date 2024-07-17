@@ -1,3 +1,4 @@
+print("Tetris")
 import time
 import pygame as pg
 import random
@@ -8,7 +9,7 @@ class Block:
         self.y = 4
         self.tiles = Blocks[blocktype]
     def rotate(self,rotation=None):
-        if type(rotation) == "intager"
+        if type(rotation) == "integer"  
 
     def draw(self):
         for i in self.tiles:
@@ -77,10 +78,6 @@ while True:
 
 # Exit program
 pg.quit()
-
-#Gravitation
-Level = 0
-gravitation = 1 + Level
 
 
 
