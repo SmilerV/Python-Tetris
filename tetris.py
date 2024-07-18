@@ -70,10 +70,12 @@ Blocks = {
 
 
 }
-blocktypes = ["T","cube","J","L","I","Z","S"]
+blocktypes = ["T","cube","J","L","I","Z","S","C"]
 if askquestion("Select mode", "Do you want to use extra pieces?") == "no":
     Blocks.pop("C")
-blocktypes = ["T","cube","J","L","I","Z","S","C"]
+    blocktypes.remove("C")
+    print(blocktypes)
+
 
 def draw(x, y, color="blue"):
     pg.draw.rect(surface, colours[color], pg.Rect(x * 50 + 2, y * 50 + 2, 50 - 2, 50 - 2))
@@ -146,7 +148,6 @@ i = 0
 while i <= size[0]:
     bg.append(temp.copy())
     i += 1
-block = Block("C")
 temp = None
 points = 0
 block = Block("J")
