@@ -2,6 +2,7 @@ import time
 import pygame as pg
 import random
 from tkinter.messagebox import showinfo
+from tkinter.messagebox import askquestion
 
 def convert(relative, useold=False):
     if useold:
@@ -63,8 +64,8 @@ Blocks = {
     'S': [[(0, 0), (0, -1), (1, 1), (1, 0)],[(0, 0), (1, 0), (-1, 1), (0, 1)],[(0, 0), (0, -1), (1, 1), (1, 0)],[(0, 0), (1, 0), (-1, 1), (0, 1)],],
 }
 blocktypes = ["T","cube","J","L","I","Z","S"]
-
-
+if askquestion("Select mode", "Do you want to use extra pieces?") == "no":
+    Blocks.pop("C")
 
 def draw(x, y, color="blue"):
     pg.draw.rect(surface, colours[color], pg.Rect(x * 50 + 2, y * 50 + 2, 50 - 2, 50 - 2))
@@ -90,7 +91,6 @@ def lineclear():
             lineclear = lineclear and bg[i2][i]
             i2 += 1
         if lineclear:
-            print("Clear")
             clears += 1
             i2 = 0
             while i2 < size[0]:
