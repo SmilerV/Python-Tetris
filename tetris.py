@@ -114,7 +114,6 @@ i = 0
 while i <= size[0]:
     bg.append(temp.copy())
     i += 1
-block = Block("J")
 block = Block("C")
 while True:
     if time.time()-lastgravity > 1/down_speed:
