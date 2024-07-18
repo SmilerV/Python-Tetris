@@ -11,8 +11,6 @@ class Block:
     def __init__(self,blocktype):
         self.blocktype = blocktype
         self.oldrotation = None
-        self.x = 5
-        self.y = 4
         self.rotation = 0
         self.tiles = Blocks[blocktype][0]
     def rotate(self,rotation=None):
@@ -71,8 +69,8 @@ def update():
     block.draw()
     pg.display.flip()
 
-y = 0
-x = 0
+y = 1
+x = 5
 lx = 0
 ly = 0
 
