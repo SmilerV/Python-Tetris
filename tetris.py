@@ -121,7 +121,3 @@ while True:
 
 # Exit program
 pg.quit()
-
-
-
-
