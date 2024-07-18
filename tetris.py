@@ -153,7 +153,7 @@ while True:
             points += lineclear()**2*10
             y = 1
             x = 5
-            block = Block(blocktypes[random.randint(0,6)])
+            block = Block(blocktypes[random.randint(0,len(blocktypes)-1)])
         lastgravity = time.time()
     event = pg.event.get(pg.KEYDOWN)
     if event:
