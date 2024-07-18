@@ -1,6 +1,7 @@
 import time
 import pygame as pg
 import random
+from tkinter.messagebox import showinfo
 
 def convert(relative, useold=False):
     if useold:
@@ -39,7 +40,6 @@ class Block:
         for i in self.tiles:
             cx, cy = convert(i)
             bg[cx][cy] = True
-        print(bg)
     def draw(self):
         for i in Blocks[self.blocktype][self.oldrotation]:
             draw(*convert(i, True), "black")
@@ -75,6 +75,39 @@ def update():
     block.tick()
     pg.display.flip()
 
+def lineclear():
+    colornames = ["red","yellow","green"]
+    i=0
+    i0=0
+    clears = 0
+    while i < size[1]:
+        i0+=1
+        lineclear = True
+        i2 = 0
+        while i2 < size[0]:
+            i0+=1
+            #draw(i2,i,colornames[i0%3])
+            lineclear = lineclear and bg[i2][i]
+            i2 += 1
+        if lineclear:
+            print("Clear")
+            clears += 1
+            i2 = 0
+            while i2 < size[0]:
+                bg[i2].pop(i)
+                draw(i2,i,"black")
+                i2 += 1
+            i2 = 0
+            while i2 < size[0]:
+                bg[i2].insert(0,False)
+                i2 += 1
+        i += 1
+    if clears > 0:
+        for i in range(0,size[0]):
+            for i2 in range(0,size[1]):
+                draw(i,i2,"black")
+    return clears
+
 def drawBG():
     i=0
     while i <= size[0]:
@@ -106,12 +139,18 @@ i = 0
 while i <= size[0]:
     bg.append(temp.copy())
     i += 1
+temp = None
+points = 0
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
         if block.collides():
+            if y < 3:
+                showinfo("You lost", str(points)+" Points")
+                break
             y -= 1
             block.place()
+            points += lineclear()**2*10
             y = 1
             x = 5
             block = Block(blocktypes[random.randint(0,6)])
