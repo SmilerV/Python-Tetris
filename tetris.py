@@ -2,16 +2,16 @@ import time
 import pygame as pg
 import random
 
-def convert(relative):
-    r=[]
-    for i in relative:
-        r.append((i[0]+x, i[1]+y))
-    return r
+def convert(relative, useold=False):
+    if useold:
+        return (relative[0]+lx,relative[1]+ly)
+    return (relative[0]+x,relative[1]+y)
 
 class Block:
     def __init__(self,blocktype):
-        self.x = 5
-        self.y = 4
+        self.blocktype = blocktype
+        self.oldrotation = None
+        self.rotation = 0
         self.tiles = Blocks[blocktype][0]
     def rotate(self,rotation=None):
         self.oldrotation
@@ -21,11 +21,22 @@ class Block:
             rotation = self.rotation + 1
         self.tiles = Blocks[self.blocktype][rotation]
         
+        if self.collides():
+            self.rotate(self.oldrotation)
+
+    def collides(self):
+        for i in self.tiles:
+            cx, cy = convert(i)
+            if cx > size[0] or cx < 0 or cy > size[1] or cy < 0:
+                return True
+        return False
 
      
     def draw(self):
+        if not self.oldrotation:
+            self.oldrotation = self.rotation
         for i in Blocks[self.blocktype][self.oldrotation]:
-            draw(*convert(i), "black")
+            draw(*convert(i, True), "black")
         for i in self.tiles:
             draw(*convert(i))
 
@@ -62,12 +73,11 @@ def draw(x, y, color="blue"):
 
 changed = True
 def update():
-    draw(lx,ly,"black")
-    draw(x,y)
+    block.draw()
     pg.display.flip()
 
-y = 0
-x = 0
+y = 1
+x = 5
 lx = 0
 ly = 0
 
@@ -76,6 +86,17 @@ pg.init()
 size = (10,16)
 surface = pg.display.set_mode((size[0]*50, size[1]*50))
 lastgravity = 0
+block = Block("S")
+i = 0
+bg = []
+temp = []
+while i <= size[1]:
+    temp.append(False)
+    i += 1
+i = 0
+while i <= size[0]:
+    bg.append(temp)
+    i += 1
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
@@ -88,6 +109,8 @@ while True:
             x -= 1
         elif event[0].key == pg.K_DOWN:
             lastgravity = 0
+        elif event[0].key == pg.K_UP:
+            block.rotate()
     update()
     lx = x
     ly = y
