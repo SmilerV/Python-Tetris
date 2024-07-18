@@ -17,19 +17,21 @@ class Block:
         if type(rotation) != int:
             rotation = None
         if rotation == None:
-            self.rotation = (self.rotation + 1)%4
-        self.tiles = Blocks[self.blocktype][self.rotation]
+            rotation = (self.rotation + 1)%4
+        self.tiles = Blocks[self.blocktype][rotation]
         
         if self.collides():
-            print("Couldn't rotate")
-            self.rotate(self.oldrotation)
+            self.tiles = Blocks[self.blocktype][self.rotation]
+        else:
+            self.rotation = rotation
 
     def tick(self):
+        self.draw()
         self.oldrotation = self.rotation
     def collides(self):
         for i in self.tiles:
             cx, cy = convert(i)
-            if cx > size[0] or cx < 0 or cy > size[1] or cy < 0:
+            if cx >= size[0] or cx < 0 or cy >= size[1] or cy < 0:
                 return True
         return False
 
@@ -64,7 +66,6 @@ def draw(x, y, color="blue"):
 
 changed = True
 def update():
-    block.draw()
     block.tick()
     pg.display.flip()
 
@@ -97,8 +98,12 @@ while True:
     if event:
         if event[0].key == pg.K_RIGHT:
             x += 1
-        if event[0].key == pg.K_LEFT:
+            if block.collides():
+                x -= 1
+        elif event[0].key == pg.K_LEFT:
             x -= 1
+            if block.collides():
+                x += 1
         elif event[0].key == pg.K_DOWN:
             lastgravity = 0
         elif event[0].key == pg.K_UP:
