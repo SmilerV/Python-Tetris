@@ -10,20 +10,22 @@ def convert(relative, useold=False):
 class Block:
     def __init__(self,blocktype):
         self.blocktype = blocktype
-        self.oldrotation = None
+        self.oldrotation = 0
         self.rotation = 0
         self.tiles = Blocks[blocktype][0]
     def rotate(self,rotation=None):
-        self.oldrotation
         if type(rotation) != int:
             rotation = None
         if rotation == None:
-            rotation = self.rotation + 1
-        self.tiles = Blocks[self.blocktype][rotation]
+            self.rotation = (self.rotation + 1)%4
+        self.tiles = Blocks[self.blocktype][self.rotation]
         
         if self.collides():
+            print("Couldn't rotate")
             self.rotate(self.oldrotation)
 
+    def tick(self):
+        self.oldrotation = self.rotation
     def collides(self):
         for i in self.tiles:
             cx, cy = convert(i)
@@ -33,8 +35,6 @@ class Block:
 
      
     def draw(self):
-        if not self.oldrotation:
-            self.oldrotation = self.rotation
         for i in Blocks[self.blocktype][self.oldrotation]:
             draw(*convert(i, True), "black")
         for i in self.tiles:
@@ -54,17 +54,8 @@ Blocks = {
     'L': [[(0, 0), (1, 0), (-1, 0), (1, -1)],[(0, 0), (1, -1), (-1, 0), (1, 0)],[(0, 0), (0, 1), (0, -1), (-1, -1)],[(0, 0), (1, 0), (-1, 0), (-1, 1)],],
     'I': [[(0, 0), (0, 1), (0, -1), (0, -2)],[(0, 0), (1, 0), (-1, 0), (-2, 0)],[(0, 0), (0, 1), (0, -1), (0, -2)],[(0, 0), (1, 0), (-1, 0), (-2, 0)],],
     'reverseS'  : [[(0, 0), (1, 0), (1, -1), (0, 1)],[(0, 0), (-1, 0), (1, 1), (0, 1)],[(0, 0), (1, 0), (1, -1), (0, 1)],[(0, 0), (-1, 0), (1, 1), (0, 1)],],
-    'S': [[(0, 0), (-1, 0), (-1, 1), (0, 1)],[(0, 0), (1, 0), (-1, 1), (0, 1)],[(0, 0), (-1, 0), (-1, 1), (0, 1)],[(0, 0), (1, 0), (-1, 1), (0, 1)],],
-
-
-
-
-
+    'S': [[(0, 0), (-1, 0), (-1, 1), (0, 1)],[(0, 0), (1, 0), (-1, 1), (0, 1)],[(0, 0), (-1, 0), (-1, 1), (0, 1)],[(0, 0), (1, 0), (-1, 1), (0, 1)],]
 }
-#randomizer
-temp = ["T","cube","J","L","I","reverseS","S"]
-s=Blocks[temp[random.randint(0,8)]]
-
 
 
 
@@ -74,6 +65,7 @@ def draw(x, y, color="blue"):
 changed = True
 def update():
     block.draw()
+    block.tick()
     pg.display.flip()
 
 y = 1
@@ -86,7 +78,7 @@ pg.init()
 size = (10,16)
 surface = pg.display.set_mode((size[0]*50, size[1]*50))
 lastgravity = 0
-block = Block("S")
+block = Block("I")
 i = 0
 bg = []
 temp = []
