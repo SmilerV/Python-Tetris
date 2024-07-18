@@ -100,13 +100,6 @@ pg.quit()
 
 #line clear
 
-def clear_lines(self):
-        for i, row in enumerate(self.grid[:-1]):
-            if all(cell != 0 for cell in row):
-                lines_cleared += 1
-                del self.grid[i]
-                self.grid.insert(0, [0 for _ in range(self.width)])
-        return lines_cleared
 
 #valid moves
 
@@ -119,3 +112,10 @@ def valid_move(self, piece, x, y, rotation):
                 except IndexError:
                     return False
         return True
+
+def new_piece(self):
+        # Choose a random shape
+        Block = random.choice(Block)
+        # Return a new Tetromino object
+        return Block(self.width // 2, 0, Block)
+
