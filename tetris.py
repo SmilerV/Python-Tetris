@@ -47,8 +47,6 @@ class Block:
             draw(*convert(i))
 
 #colour data bank
-colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "yellow": [0, 255, 0], "green": [255, 0, 255],
-           "violet": [255, 255, 0], "orange": [0, 255, 255], "white": [255, 255, 255], "black": [0, 0, 0]}
 colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "green": [0, 255, 0], "cyan": [0, 255, 255],
            "pink": [255, 0, 255], "yellow": [255, 255, 0], "white": [255, 255, 255], "black": [0, 0, 0]}
 colors = colours
