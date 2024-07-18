@@ -48,9 +48,7 @@ Blocks = {
     'S': [(0, 0), (-1, 0), (-1, 1), (0, -1)]
 
 }
-#randomizer
-temp = ["T","cube","J","L","I","downT","_","reverseS","S"]
-s=Blocks[temp[random.randint(0,8)]]
+
 
 
 
@@ -71,9 +69,19 @@ ly = 0
 
 down_speed = 2
 pg.init()
-size = (10,16)
+size = (13,16)
 surface = pg.display.set_mode((size[0]*50, size[1]*50))
 lastgravity = 0
+i = 0
+bg = []
+temp = []
+while i <= size[1]:
+    temp.append(False)
+    i += 1
+i = 0
+while i <= size[0]:
+    bg.append(temp)
+    i += 1
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
@@ -93,29 +101,10 @@ while True:
     event = pg.event.get(pg.WINDOWCLOSE)
     if event:
         break
-
+print("Exit")
 # Exit program
+print(bg)
+
 pg.quit()
 
-
-#line clear
-
-
-#valid moves
-
-def valid_move(self, piece, x, y, rotation):
-        for i, row in enumerate(piece.shape[(piece.rotation + rotation) % len(piece.shape)]):
-            for j, cell in enumerate(row):
-                try:
-                    if cell == 'O' and (self.grid[piece.y + i + y][piece.x + j + x] != 0):
-                        return False
-                except IndexError:
-                    return False
-        return True
-
-def new_piece(self):
-        # Choose a random shape
-        Block = random.choice(Block)
-        # Return a new Tetromino object
-        return Block(self.width // 2, 0, Block)
-
+#2dlist
