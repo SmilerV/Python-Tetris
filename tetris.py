@@ -59,9 +59,6 @@ Blocks = {
     'S': [[(0, 0), (-1, 0), (-1, 1), (0, -1)]]
 
 }
-#randomizer
-temp = ["T","cube","J","L","I","downT","_","reverseS","S"]
-s=Blocks[temp[random.randint(0,8)]]
 
 
 
@@ -85,6 +82,16 @@ size = (10,16)
 surface = pg.display.set_mode((size[0]*50, size[1]*50))
 lastgravity = 0
 block = Block("S")
+i = 0
+bg = []
+temp = []
+while i <= size[1]:
+    temp.append(False)
+    i += 1
+i = 0
+while i <= size[0]:
+    bg.append(temp)
+    i += 1
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
@@ -106,29 +113,7 @@ while True:
     event = pg.event.get(pg.WINDOWCLOSE)
     if event:
         break
-
 # Exit program
+
 pg.quit()
 
-
-#line clear
-
-def clear_lines(self):
-        for i, row in enumerate(self.grid[:-1]):
-            if all(cell != 0 for cell in row):
-                lines_cleared += 1
-                del self.grid[i]
-                self.grid.insert(0, [0 for _ in range(self.width)])
-        return lines_cleared
-
-#valid moves
-
-def valid_move(self, piece, x, y, rotation):
-        for i, row in enumerate(piece.shape[(piece.rotation + rotation) % len(piece.shape)]):
-            for j, cell in enumerate(row):
-                try:
-                    if cell == 'O' and (self.grid[piece.y + i + y][piece.x + j + x] != 0):
-                        return False
-                except IndexError:
-                    return False
-        return True
