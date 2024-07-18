@@ -31,11 +31,15 @@ class Block:
     def collides(self):
         for i in self.tiles:
             cx, cy = convert(i)
-            if cx >= size[0] or cx < 0 or cy >= size[1] or cy < 0:
+            if cx >= size[0] or cx < 0 or cy >= size[1] or cy < 0 or bg[cx][cy]:
                 return True
         return False
 
-     
+    def place(self):
+        for i in self.tiles:
+            cx, cy = convert(i)
+            bg[cx][cy] = True
+        print(bg)
     def draw(self):
         for i in Blocks[self.blocktype][self.oldrotation]:
             draw(*convert(i, True), "black")
@@ -57,9 +61,8 @@ Blocks = {
     'I': [[(0, 0), (0, 1), (0, -1), (0, -2)],[(0, 0), (1, 0), (-1, 0), (-2, 0)],[(0, 0), (0, 1), (0, -1), (0, -2)],[(0, 0), (1, 0), (-1, 0), (-2, 0)],],
     'Z'  : [[(0, 0), (1, 0), (1, -1), (0, 1)],[(0, 0), (-1, 0), (1, 1), (0, 1)],[(0, 0), (1, 0), (1, -1), (0, 1)],[(0, 0), (-1, 0), (1, 1), (0, 1)]],
     'S': [[(0, 0), (0, -1), (1, 1), (1, 0)],[(0, 0), (1, 0), (-1, 1), (0, 1)],[(0, 0), (0, -1), (1, 1), (1, 0)],[(0, 0), (1, 0), (-1, 1), (0, 1)],],
-
 }
-
+blocktypes = ["T","cube","J","L","I","reverseS","S"]
 
 
 
@@ -68,8 +71,19 @@ def draw(x, y, color="blue"):
 
 changed = True
 def update():
+    drawBG()
     block.tick()
     pg.display.flip()
+
+def drawBG():
+    i=0
+    while i <= size[0]:
+        i2 = 0
+        while i2 <= size[1]:
+            if bg[i][i2]:
+                draw(i,i2)
+            i2 += 1
+        i += 1
 
 y = 1
 x = 5
@@ -90,11 +104,17 @@ while i <= size[1]:
     i += 1
 i = 0
 while i <= size[0]:
-    bg.append(temp)
+    bg.append(temp.copy())
     i += 1
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
+        if block.collides():
+            y -= 1
+            block.place()
+            y = 1
+            x = 5
+            block = Block(blocktypes[random.randint(0,6)])
         lastgravity = time.time()
     event = pg.event.get(pg.KEYDOWN)
     if event:
