@@ -1,7 +1,6 @@
 import time
 import pygame as pg
 import random
-from tkinter.messagebox import showinfo
 
 def convert(relative, useold=False):
     if useold:
@@ -40,6 +39,7 @@ class Block:
         for i in self.tiles:
             cx, cy = convert(i)
             bg[cx][cy] = True
+        print(bg)
     def draw(self):
         for i in Blocks[self.blocktype][self.oldrotation]:
             draw(*convert(i, True), "black")
@@ -49,6 +49,8 @@ class Block:
 #colour data bank
 colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "yellow": [0, 255, 0], "green": [255, 0, 255],
            "violet": [255, 255, 0], "orange": [0, 255, 255], "white": [255, 255, 255], "black": [0, 0, 0]}
+colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "green": [0, 255, 0], "cyan": [0, 255, 255],
+           "pink": [255, 0, 255], "yellow": [255, 255, 0], "white": [255, 255, 255], "black": [0, 0, 0]}
 colors = colours
 
 #block
@@ -61,12 +63,17 @@ Blocks = {
     'I': [[(0, 0), (0, 1), (0, -1), (0, -2)],[(0, 0), (1, 0), (-1, 0), (-2, 0)],[(0, 0), (0, 1), (0, -1), (0, -2)],[(0, 0), (1, 0), (-1, 0), (-2, 0)],],
     'Z'  : [[(0, 0), (1, 0), (1, -1), (0, 1)],[(0, 0), (-1, 0), (1, 1), (0, 1)],[(0, 0), (1, 0), (1, -1), (0, 1)],[(0, 0), (-1, 0), (1, 1), (0, 1)]],
     'S': [[(0, 0), (0, -1), (1, 1), (1, 0)],[(0, 0), (1, 0), (-1, 1), (0, 1)],[(0, 0), (0, -1), (1, 1), (1, 0)],[(0, 0), (1, 0), (-1, 1), (0, 1)],],
+
+
+
+
+
+
 }
 blocktypes = ["T","cube","J","L","I","Z","S"]
 
 
 
-def draw(x, y, color="blue"):
     pg.draw.rect(surface, colours[color], pg.Rect(x * 50 + 2, y * 50 + 2, 50 - 2, 50 - 2))
 
 changed = True
@@ -74,39 +81,6 @@ def update():
     drawBG()
     block.tick()
     pg.display.flip()
-
-def lineclear():
-    colornames = ["red","yellow","green"]
-    i=0
-    i0=0
-    clears = 0
-    while i < size[1]:
-        i0+=1
-        lineclear = True
-        i2 = 0
-        while i2 < size[0]:
-            i0+=1
-            #draw(i2,i,colornames[i0%3])
-            lineclear = lineclear and bg[i2][i]
-            i2 += 1
-        if lineclear:
-            print("Clear")
-            clears += 1
-            i2 = 0
-            while i2 < size[0]:
-                bg[i2].pop(i)
-                draw(i2,i,"black")
-                i2 += 1
-            i2 = 0
-            while i2 < size[0]:
-                bg[i2].insert(0,False)
-                i2 += 1
-        i += 1
-    if clears > 0:
-        for i in range(0,size[0]):
-            for i2 in range(0,size[1]):
-                draw(i,i2,"black")
-    return clears
 
 def drawBG():
     i=0
@@ -138,19 +112,13 @@ i = 0
 while i <= size[0]:
     bg.append(temp.copy())
     i += 1
-temp = None
-points = 0
 block = Block("J")
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
         if block.collides():
-            if y < 3:
-                showinfo("You lost", str(points)+" Points")
-                break
             y -= 1
             block.place()
-            points += lineclear()**2*10
             y = 1
             x = 5
             block = Block(blocktypes[random.randint(0,6)])
@@ -179,3 +147,4 @@ while True:
 
 # Exit program
 pg.quit()
+#01110111 01100101 00100000 01100100 01101001 01100100 00100000 01101001 01110100 00001010
