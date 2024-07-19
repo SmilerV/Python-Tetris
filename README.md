@@ -19,7 +19,7 @@ The up key will turn the block clockwise.
 ## Config file
 
 The config file is automatically generated in `%appdata%\python-tetris\config.json`  
-It is a (as the file-ending suggests) json file that as of release 1.0 includes the settings  
+It is a (as the file-ending suggests) json file that as of release 1.0 includes the following settings:  
 
 | Setting        | Description                                                                                                                                                                                                                                                                                                  |
 |----------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
