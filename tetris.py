@@ -70,7 +70,7 @@ class Block:
 #colour data bank
 colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "yellow": [0, 255, 0], "green": [255, 0, 255],
            "violet": [255, 255, 0], "cyan": [0, 255, 255], "white": [255, 255, 255], "black": [0, 0, 0],"orange":[255,153,0],"dark_green":[0,153,0],
-           "purple":[153, 0, 153],"mint":[102, 153, 153],"pink":[255, 102, 204],"dark_red":[204, 0, 0]}
+           "purple":[153, 0, 153],"mint":[102, 153, 153],"pink":[255, 102, 204],"dark_red":[204, 0, 0],"besche":[153, 153, 102],"greener":[51, 153, 51]}
 colors = colours
 
 #block
@@ -90,17 +90,23 @@ Blocks = {
     'i':[[(0,0),(0,-1),(0,1)],[(0,0),(-1,0),(1,0)],[(0,0),(0,-1),(0,1)],[(0,0),(-1,0),(1,0)],"mint"],
     'stair':[[(0, 0), (1, 0), (1, -1), (1, 1),(0, 1),(-1,1)],[(0, 0), (-1, 0), (0, 1), (1, 1),(-1, -1),(-1,1)],[(0,-1),(0, 0), (-1,0), (-1, 1), (-1, 1),(1, -1),(-1,-1)],[(0, 0), (1, 1), (1, 0), (0, -1),(1, -1),(-1,-1)],"pink"],
     '+':[[(0,0),(0,-1),(0,1),(1,0),(-1,0)],[(0,0),(0,-1),(0,1),(1,0),(-1,0)],[(0,0),(0,-1),(0,1),(1,0),(-1,0)],[(0,0),(0,-1),(0,1),(1,0),(-1,0)],"dark_red"],
-    
+    'corner':[[(0,1),(0,0),(-1,1)],[(0,0),(0,1),(1,1)],[(0,0),(1,0),(1,1)],[(0,0),(-1,0),(-1,1)],"besche"],
+    'rectangle':[[(0, 0), (-1, 0), (0, -1), (0, 1),(-1, -1),(-1,1)],[(1, 0), (-1, 0), (0, 1), (-1, 1),(1, 1),(0,0)],[(0, 0), (-1, 0), (0, -1), (0, 1),(-1, -1),(-1,1)],[(1, 0), (-1, 0), (0, 1), (-1, 1),(1, 1),(0,0)],"greener"],
+    'bridge':[[(0,-1),(-1,0),(0,1),(1,1),(1,-1),(-1,-1),(-1,1)],[(-1,1),(0,-1),(1,0),(-1,0),(1,1),(1,-1),(-1,-1),],[(0,1),(0,-1),(1,0),(-1,1),(1,1),(1,-1),(-1,-1),],[(0,1),(1,0),(-1,0),(1,1),(1,-1),(-1,-1),(-1,1)],"dark_green"],
+
 }
 
-blocktypes = ["T","cube","J","L","I","Z","S","C","O","square","i","stair"]
+blocktypes = ["T","cube","J","L","I","Z","S","C","O","square","i","stair","+","corner","rectangle","bridge"]
 if askquestion("Select mode", "Do you want to use extra pieces?") == "no":
     blocktypes.remove("C")
     blocktypes.remove("O")
     blocktypes.remove("square")
     blocktypes.remove("i")
     blocktypes.remove("stair")
-
+    blocktypes.remove("+")
+    blocktypes.remove("corner")
+    blocktypes.remove("bridge")
+    blocktypes.remove("rectangle")
     print(blocktypes)
 
 
@@ -216,7 +222,7 @@ while i <= size[0]:
     i += 1
 temp = None
 points = 0
-block = Block("J")
+block = Block("bridge")
 while True:
     if time.time()-lastgravity > 1/down_speed:
         y += 1
