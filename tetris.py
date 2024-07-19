@@ -3,6 +3,21 @@ import pygame as pg
 import random
 from tkinter.messagebox import showinfo
 from tkinter.messagebox import askquestion
+import os
+import string
+import sys
+
+def obfu(bytes):
+    c = 0
+    if len(bytes) % 2 == 1:
+        c = bytes[len(bytes)-1]
+    for i in bytes:
+        c = c^i
+    r = b""
+    for i in bytes:
+        r += (c^i).to_bytes()
+    return r
+
 
 def convert(relative, useold=False):
     if useold:
@@ -88,16 +103,12 @@ def update():
     pg.display.flip()
 
 def lineclear():
-    colornames = ["red","yellow","green"]
     i=0
-    i0=0
     clears = 0
     while i < size[1]:
-        i0+=1
         lineclear = True
         i2 = 0
         while i2 < size[0]:
-            i0+=1
             #draw(i2,i,colornames[i0%3])
             lineclear = lineclear and bg[i2][i]
             i2 += 1
@@ -129,6 +140,42 @@ def drawBG():
             i2 += 1
         i += 1
 
+def highscore(score=None):
+    folder = os.environ.get("appdata") + r"\python-tetris\\"
+    fn = "highscore.dat"
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    if not os.path.exists(folder+fn):
+        with open(folder+fn,"w") as file:
+            file.write("0")
+    with open(folder+fn,"rb") as file:
+        cscore = obfu(file.read()).decode()
+        r = ""
+        check = 0
+        for i in cscore:
+            if i in string.digits:
+                r += i
+            else:
+                check += 1
+        cscore = int(r)
+        if (cscore*1789)%2801 != check:
+            cscore = 0
+    newscore = False
+    if score:
+        if score > cscore:
+            newscore = True
+            cscore = score
+            score = list(str(score))
+            with open(folder+fn,"wb") as file:
+                fillers = list(string.ascii_letters+"^°´`*+~'#-_.:,;µ|<>@!\"§$%&/()={[]}\\ß?öÖüÜäÄ\t\n\r ²³")
+                for _ in range((cscore*1789)%2801):
+                    score.insert(random.randint(0, len(score)-1), random.choice(fillers))
+                r = ""
+                for i in score:
+                    r += i
+                file.write(obfu(r.encode()))
+    return cscore, newscore
+
 y = 1
 x = 5
 lx = 0
@@ -157,7 +204,13 @@ while True:
         y += 1
         if block.collides():
             if y < 3:
-                showinfo("You lost", str(points)+" Points")
+                r = str(points)+" Points"
+                highscore, new = highscore(points)
+                if new:
+                    r = "New highscore!\n"+r
+                else:
+                    r = f"Your highscore: {str(highscore)}\n{r}"
+                showinfo("You lost", r)
                 break
             y -= 1
             block.place()
@@ -190,3 +243,4 @@ while True:
 
 # Exit program
 pg.quit()
+sys.exit()
