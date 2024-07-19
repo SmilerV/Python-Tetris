@@ -14,7 +14,7 @@ if not os.path.exists(folder):
     os.makedirs(folder)
 if not os.path.exists(folder+"config.json"):
     with open(folder+"config.json", "wb") as file:
-        file.write(zlib.decompress(b'x\xda\xabV*.HMM\x89\xcf\xcdO\xc9L\xcbL-R\xb22\xd03\xac\x05\x00_4\x07\xc5'))
+        file.write(zlib.decompress(b'x\xda\xabV*.HMM\x89\xcf\xcdO\xc9L\xcbL-R\xb22\xac\x05\x00Px\x07g'))
 with open(folder+"config.json","r") as file:
     config = json.loads(file.read())
 def obfu(bytes):
@@ -179,7 +179,7 @@ def highscore(score=None):
     with open(folder+fn,"rb") as file:
         try:
             cscore = zlib.decompress(obfu(file.read())).decode()
-        except UnicodeDecodeError or zlib.error:
+        except (UnicodeDecodeError, zlib.error):
             cscore = "0"
         r = ""
         check = 0
@@ -246,9 +246,8 @@ while True:
             y -= 1
             block.place()
             points += lineclear()**2*10
-            print(config)
-            down_speed = (points * config["speed_modifier"]).__floor__() + 2
-            down_speed = (points / 100).__floor__() + 2
+            print(config["speed_modifier"])
+            down_speed = (points * config["speed_modifier"]/100).__floor__() + 2
             y = 1
             x = 5
             block = Block(blocktypes[random.randint(0,len(blocktypes)-1)])
