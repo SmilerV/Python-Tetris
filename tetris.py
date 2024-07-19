@@ -13,8 +13,8 @@ folder = os.environ.get("appdata") + r"\python-tetris\\"
 if not os.path.exists(folder):
     os.makedirs(folder)
 if not os.path.exists(folder+"config.json"):
-    with open(folder+"config.json", "wb") as file:
-        file.write(zlib.decompress(b'x\xda\xabV*.HMM\x89\xcf\xcdO\xc9L\xcbL-R\xb22\xac\x05\x00Px\x07g'))
+    with open(folder+"config.json", "w") as file:
+        file.write('{"speed_modifier":1}')
 with open(folder+"config.json","r") as file:
     config = json.loads(file.read())
 def obfu(bytes):
