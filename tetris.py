@@ -58,7 +58,7 @@ class Block:
     def place(self):
         for i in self.tiles:
             cx, cy = convert(i)
-            bg[cx][cy] = True
+            bg[cx][cy] = self.color
     def draw(self, color=None):
         if not color:
             color = self.color
@@ -69,7 +69,7 @@ class Block:
 
 #colour data bank
 colours = {"blue": [0, 0, 255], "red": [255, 0, 0], "yellow": [0, 255, 0], "green": [255, 0, 255],
-           "violet": [255, 255, 0], "orange": [0, 255, 255], "white": [255, 255, 255], "black": [0, 0, 0],"orange":[255,153,0],"dark_green":[0,153,0],"purple":[153, 0, 153],"mint":[102, 153, 153],"pink":[255, 102, 204]}
+           "violet": [255, 255, 0], "cyan": [0, 255, 255], "white": [255, 255, 255], "black": [0, 0, 0],"orange":[255,153,0],"dark_green":[0,153,0],"purple":[153, 0, 153],"mint":[102, 153, 153],"pink":[255, 102, 204]}
 colors = colours
 
 #block
@@ -134,7 +134,7 @@ def lineclear():
                 i2 += 1
             i2 = 0
             while i2 < size[0]:
-                bg[i2].insert(0,False)
+                bg[i2].insert(0,None)
                 i2 += 1
         i += 1
     if clears > 0:
@@ -149,7 +149,7 @@ def drawBG():
         i2 = 0
         while i2 <= size[1]:
             if bg[i][i2]:
-                draw(i,i2)
+                draw(i,i2,bg[i][i2])
             i2 += 1
         i += 1
 
@@ -206,7 +206,7 @@ i = 0
 bg = []
 temp = []
 while i <= size[1]:
-    temp.append(False)
+    temp.append(None)
     i += 1
 i = 0
 while i <= size[0]:
@@ -226,6 +226,7 @@ while True:
                     r = "New highscore!\n"+r
                 else:
                     r = f"Your highscore: {str(highscore)}\n{r}"
+                showinfo("You lost", r)
                 break
             y -= 1
             block.place()
