@@ -93,8 +93,12 @@ Blocks = {
 
 blocktypes = ["T","cube","J","L","I","Z","S","C","O","square","i","stair"]
 if askquestion("Select mode", "Do you want to use extra pieces?") == "no":
-    Blocks.pop("C","O","square","i","stair")
-    blocktypes.remove("C","O","square","i","stair")
+    blocktypes.remove("C")
+    blocktypes.remove("O")
+    blocktypes.remove("square")
+    blocktypes.remove("i")
+    blocktypes.remove("stair")
+
     print(blocktypes)
 
 
@@ -108,12 +112,16 @@ def update():
     pg.display.flip()
 
 def lineclear():
+    colornames = ["red","yellow","green"]
     i=0
+    i0=0
     clears = 0
     while i < size[1]:
+        i0+=1
         lineclear = True
         i2 = 0
         while i2 < size[0]:
+            i0+=1
             #draw(i2,i,colornames[i0%3])
             lineclear = lineclear and bg[i2][i]
             i2 += 1
@@ -218,7 +226,6 @@ while True:
                     r = "New highscore!\n"+r
                 else:
                     r = f"Your highscore: {str(highscore)}\n{r}"
-                showinfo("You lost", r)
                 break
             y -= 1
             block.place()
