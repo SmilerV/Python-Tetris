@@ -239,6 +239,7 @@ while True:
             y -= 1
             block.place()
             points += lineclear()**2*10
+            down_speed = (points / 100).__floor__() + 2
             y = 1
             x = 5
             block = Block(blocktypes[random.randint(0,len(blocktypes)-1)])
