@@ -179,7 +179,7 @@ def highscore(score=None):
     with open(folder+fn,"rb") as file:
         try:
             cscore = zlib.decompress(obfu(file.read())).decode()
-        except UnicodeDecodeError:
+        except UnicodeDecodeError or zlib.error:
             cscore = "0"
         r = ""
         check = 0
