@@ -157,7 +157,10 @@ def highscore(score=None):
         with open(folder+fn,"w") as file:
             file.write("0")
     with open(folder+fn,"rb") as file:
-        cscore = obfu(file.read()).decode()
+        try:
+            cscore = obfu(file.read()).decode()
+        except UnicodeDecodeError:
+            cscore = "0"
         r = ""
         check = 0
         for i in cscore:
