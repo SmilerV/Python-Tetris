@@ -6,7 +6,17 @@ from tkinter.messagebox import askquestion
 import os
 import string
 import sys
+import json
+import zlib
 
+folder = os.environ.get("appdata") + r"\python-tetris\\"
+if not os.path.exists(folder):
+    os.makedirs(folder)
+if not os.path.exists(folder+"config.json"):
+    with open(folder+"config.json", "wb") as file:
+        file.write(zlib.decompress(b'x\xda\xabV*.HMM\x89\xcf\xcdO\xc9L\xcbL-R\xb22\xd03\xac\x05\x00_4\x07\xc5'))
+with open(folder+"config.json","r") as file:
+    config = json.loads(file.read())
 def obfu(bytes):
     c = 0
     if len(bytes) % 2 == 1:
@@ -155,16 +165,13 @@ def drawBG():
         i += 1
 
 def highscore(score=None):
-    folder = os.environ.get("appdata") + r"\python-tetris\\"
     fn = "highscore.dat"
-    if not os.path.exists(folder):
-        os.makedirs(folder)
     if not os.path.exists(folder+fn):
-        with open(folder+fn,"w") as file:
-            file.write("0")
+        with open(folder+fn,"wb") as file:
+            file.write(b'\x9ez\xd5\xe6\xe6\xe6\xd7\xe6\xd7')
     with open(folder+fn,"rb") as file:
         try:
-            cscore = obfu(file.read()).decode()
+            cscore = zlib.decompress(obfu(file.read())).decode()
         except UnicodeDecodeError:
             cscore = "0"
         r = ""
@@ -190,7 +197,7 @@ def highscore(score=None):
                 r = ""
                 for i in score:
                     r += i
-                file.write(obfu(r.encode()))
+                file.write(obfu(zlib.compress(r.encode(),9)))
     return cscore, newscore
 
 y = 1
@@ -232,7 +239,8 @@ while True:
             y -= 1
             block.place()
             points += lineclear()**2*10
-            down_speed = (points / 10).__floor__() + 2
+            print(config)
+            down_speed = (points * config["speed_modifier"]).__floor__() + 2
             y = 1
             x = 5
             block = Block(blocktypes[random.randint(0,len(blocktypes)-1)])
