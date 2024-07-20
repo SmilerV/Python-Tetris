@@ -120,7 +120,6 @@ if askquestion("Select mode", "Do you want to use extra pieces?") == "no":
     blocktypes.remove("bridge")
     blocktypes.remove("rectangle")
     blocktypes.remove("one")
-    print(blocktypes)
 
 
 def draw(x, y, color="blue"):
@@ -249,7 +248,6 @@ while True:
             y -= 1
             block.place()
             points += lineclear()**2*10
-            print(config["speed_modifier"])
             down_speed = (points * config["speed_modifier"]/100).__floor__() + 2
             y = 1
             x = 5
