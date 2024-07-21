@@ -8,6 +8,7 @@ import string
 import sys
 import json
 import zlib
+from hashlib import md5
 
 folder = os.environ.get("appdata") + r"\python-tetris\\"
 if not os.path.exists(folder):
@@ -15,8 +16,14 @@ if not os.path.exists(folder):
 if not os.path.exists(folder+"config.json"):
     with open(folder+"config.json", "w") as file:
         file.write('{"speed_modifier":1}')
-with open(folder+"config.json","r") as file:
-    config = json.loads(file.read())
+with open(folder+"config.json","rb") as file:
+    config = file.read()
+    confighash = md5(config)
+    configinthash = str(int.from_bytes(confighash.digest(),"big"))
+    confighash = confighash.hexdigest()
+    config = json.loads(config)
+
+
 def obfu(bytes):
     c = 0
     if len(bytes) % 2 == 1:
@@ -87,7 +94,6 @@ colors = colours
 
 #block
 Blocks = {
-
     'T': [[(0, 0), (-1, 0), (1, 0), (0, -1)],[(0, 0), (1, 0), (0, 1), (0, -1)],[(0, 0), (1, 0), (-1, 0), (0, 1)],[(0, 0), (0, 1), (-1, 0), (0, -1)],"violet"],
     'cube': [[(0, 0), (0, -1), (1, 0), (1, -1)],[(0, 0), (0, -1), (1, 0), (1, -1)],[(0, 0), (0, -1), (1, 0), (1, -1)],[(0, 0), (0, -1), (1, 0), (1, -1)],"yellow"],
     'J': [[(0, 0), (0, 1), (0, -1), (-1,1)],[(0, 0), (-1, -1), (-1, 0), (1, 0)],[(0, 0), (0, 1), (0, -1), (1, -1)],[(0, 0), (-1, 0), (1,0 ), (1, 1)],"blue"],
@@ -109,7 +115,8 @@ Blocks = {
 }
 
 blocktypes = ["T","cube","J","L","I","Z","S","C","O","square","i","stair","+","corner","rectangle","bridge","one"]
-if askquestion("Select mode", "Do you want to use extra pieces?") == "no":
+extrapieces = askquestion("Select mode", "Do you want to use extra pieces?") == "no"
+if extrapieces:
     blocktypes.remove("C")
     blocktypes.remove("O")
     blocktypes.remove("square")
@@ -132,16 +139,12 @@ def update():
     pg.display.flip()
 
 def lineclear():
-    colornames = ["red","yellow","green"]
     i=0
-    i0=0
     clears = 0
     while i < size[1]:
-        i0+=1
         lineclear = True
         i2 = 0
         while i2 < size[0]:
-            i0+=1
             #draw(i2,i,colornames[i0%3])
             lineclear = lineclear and bg[i2][i]
             i2 += 1
@@ -150,17 +153,17 @@ def lineclear():
             i2 = 0
             while i2 < size[0]:
                 bg[i2].pop(i)
-                draw(i2,i,"black")
+                draw(i2, i, "black")
                 i2 += 1
             i2 = 0
             while i2 < size[0]:
-                bg[i2].insert(0,None)
+                bg[i2].insert(0, None)
                 i2 += 1
         i += 1
     if clears > 0:
-        for i in range(0,size[0]):
-            for i2 in range(0,size[1]):
-                draw(i,i2,"black")
+        for i in range(0, size[0]):
+            for i2 in range(0, size[1]):
+                draw(i, i2, "black")
     return clears
 
 def drawBG():
@@ -169,12 +172,16 @@ def drawBG():
         i2 = 0
         while i2 <= size[1]:
             if bg[i][i2]:
-                draw(i,i2,bg[i][i2])
+                draw(i, i2, bg[i][i2])
             i2 += 1
         i += 1
 
 def highscore(score=None):
-    fn = "highscore.dat"
+    if extrapieces:
+        tmp = "\1"
+    else:
+        tmp = "\2"
+    fn = f"highscore-{confighash}.dat"
     if not os.path.exists(folder+fn):
         with open(folder+fn,"wb") as file:
             file.write(b'\x9ez\xd5\xe6\xe6\xe6\xd7\xe6\xd7')
@@ -186,19 +193,25 @@ def highscore(score=None):
         r = ""
         check = 0
         for i in cscore:
-            if i in string.digits:
+            if i in string.digits+"\0\1\2":
                 r += i
             else:
                 check += 1
-        cscore = int(r)
-        if (cscore*1789)%2801 != check:
+        r = r.split("\0")
+        cscore = int(r[0])
+        if len(r) == 3:
+            if (cscore * 1789) % 2801 != check or r[1] != configinthash or r[2] != tmp:
+                cscore = 0
+        else:
             cscore = 0
     newscore = False
     if score:
         if score > cscore:
             newscore = True
             cscore = score
-            score = list(str(score))
+            score = str(score)
+            score += f"\0{configinthash}\0{tmp}"
+            score = list(score)
             with open(folder+fn,"wb") as file:
                 fillers = list(string.ascii_letters+"^°´`*+~'#-_.:,;µ|<>@!\"§$%&/()={[]}\\ß?öÖüÜäÄ\t\n\r ²³")
                 for _ in range((cscore*1789)%2801):
