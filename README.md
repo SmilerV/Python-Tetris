@@ -25,4 +25,6 @@ It is a (as the file-ending suggests) json file that as of release 1.0 includes 
 | speed_modifier | This is divided by 100 and then multiplied by the total amount of points<br/>to calculate the falling speed of the blocks in grid spaces per second.<br/>The result of this operation will have 2 added on top to account for the<br/>base speed. You may set this setting to 0 to avoid this game mechanic. |
 
 ## Todo
-- [x] Release v1.0
+- [x] Make different save files for different settings
+- [x] Overcomplicate save file format
+- [ ] Release new Version including the change
