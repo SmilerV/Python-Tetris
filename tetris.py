@@ -178,10 +178,14 @@ def drawBG():
 
 def highscore(score=None):
     if extrapieces:
+        tmp = "t"
+    else:
+        tmp = "f"
+    fn = f"highscore-{confighash}-{tmp}.dat"
+    if extrapieces:
         tmp = "\1"
     else:
         tmp = "\2"
-    fn = f"highscore-{confighash}.dat"
     if not os.path.exists(folder+fn):
         with open(folder+fn,"wb") as file:
             file.write(b'\x9ez\xd5\xe6\xe6\xe6\xd7\xe6\xd7')
