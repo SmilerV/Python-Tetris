@@ -3,6 +3,7 @@ import pygame as pg
 import random
 from tkinter.messagebox import showinfo
 from tkinter.messagebox import askquestion
+from tkinter.messagebox import showerror
 import os
 import string
 import sys
@@ -10,18 +11,29 @@ import json
 import zlib
 from hashlib import md5
 
+username = os.environ.get("username")
+if len(username) == 0:
+    showerror("Highscore error", "Failed to get username, can not load or save highscore")
 folder = os.environ.get("appdata") + r"\python-tetris\\"
 if not os.path.exists(folder):
     os.makedirs(folder)
 if not os.path.exists(folder+"config.json"):
     with open(folder+"config.json", "w") as file:
-        file.write('{"speed_modifier":1}')
+        file.write('{"speed_modifier":1.0,"base_speed":2.0}')
 with open(folder+"config.json","rb") as file:
-    config = file.read()
-    confighash = md5(config)
-    configinthash = str(int.from_bytes(confighash.digest(),"big"))
-    confighash = confighash.hexdigest()
-    config = json.loads(config)
+    rawconfig = file.read()
+try:
+    config = json.loads(rawconfig)
+    if type(config["base_speed"]) != float or type(config["speed_modifier"]) != float:
+        raise KeyError
+except (json.JSONDecodeError, KeyError):
+    showerror("Error loading settings","Settings are corrupted")
+    if askquestion("Error loading settings","Reset Settings?") == "yes":
+        os.remove(folder+"config.json")
+    sys.exit()
+confighash = md5(rawconfig)
+configinthash = str(int.from_bytes(confighash.digest(),"big"))
+confighash = confighash.hexdigest()
 
 
 def obfu(bytes):
@@ -177,6 +189,8 @@ def drawBG():
         i += 1
 
 def highscore(score=None):
+    if len(username) == 0:
+        return 0
     if extrapieces:
         tmp = "t"
     else:
@@ -196,6 +210,10 @@ def highscore(score=None):
             cscore = "0"
         r = ""
         check = 0
+        if cscore.endswith(username):
+            cscore = cscore[0:-len(username)]
+        else:
+            cscore = "0"
         for i in cscore:
             if i in string.digits+"\0\1\2":
                 r += i
@@ -223,6 +241,7 @@ def highscore(score=None):
                 r = ""
                 for i in score:
                     r += i
+                r += os.environ.get("username")
                 file.write(obfu(zlib.compress(r.encode(),9)))
     return cscore, newscore
 
@@ -231,7 +250,7 @@ x = 5
 lx = 0
 ly = 0
 
-down_speed = 2
+down_speed = config["base_speed"]
 pg.init()
 size = (10,16)
 surface = pg.display.set_mode((size[0]*50, size[1]*50))
@@ -265,7 +284,7 @@ while True:
             y -= 1
             block.place()
             points += lineclear()**2*10
-            down_speed = (points * config["speed_modifier"]/100).__floor__() + 2
+            down_speed = (points * config["speed_modifier"]/100) + config["base_speed"]
             y = 1
             x = 5
             block = Block(blocktypes[random.randint(0,len(blocktypes)-1)])
